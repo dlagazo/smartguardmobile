@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="YES"
-        android:id="@+id/button"
+        android:id="@+id/btnYes"
         android:layout_marginTop="65dp"
         android:textSize="20dp"
         android:layout_below="@+id/textView"
@@ -24,9 +24,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="NO"
-        android:id="@+id/button2"
-        android:layout_alignTop="@+id/button"
-        android:layout_toEndOf="@+id/button"
+        android:id="@+id/btnNo"
+        android:layout_alignTop="@+id/btnYes"
+        android:layout_toEndOf="@+id/btnYes"
         android:layout_marginStart="127dp"
         android:textSize="20dp" />
 

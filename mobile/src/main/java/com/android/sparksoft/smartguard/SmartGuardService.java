@@ -4,11 +4,13 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -17,17 +19,24 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
+import android.util.Base64;
 import android.view.Menu;
 import android.widget.Toast;
 
-import java.util.List;
+import com.android.sparksoft.smartguard.Helpers.HelperContactSync;
 
-public class SmartGuardService extends Service implements SensorEventListener{
+import java.util.List;
+import java.util.Locale;
+
+public class SmartGuardService extends Service{
     int count = 0;
-    float x, y, z;
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
+
+
+
+
 
 
     public SmartGuardService() {
@@ -47,14 +56,20 @@ public class SmartGuardService extends Service implements SensorEventListener{
     SoundMeter sm;
     int status;
     boolean isCharging;
+    FallDetector fl;
+    SpeechBot sp;
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
 
-
-
-        sm = new SoundMeter();
-        sm.start();
+        fl = new FallDetector(this);
+        SharedPreferences prefs = this.getSharedPreferences("com.android.sparksoft", Context.MODE_WORLD_READABLE);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString("fallStatus", "false");
+        edit.commit();
+        sp = new SpeechBot(getApplicationContext());
+        //sm = new SoundMeter();
+        //sm.start();
 
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
@@ -63,18 +78,12 @@ public class SmartGuardService extends Service implements SensorEventListener{
         //wl.release();
 
         // Let it continue running until it is stopped.
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
-
-            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-            //vibrateThreshold = accelerometer.getMaximumRange() / 2;
-
-        }
-        Toast.makeText(this, "Service recording", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Syncing contacts", Toast.LENGTH_LONG).show();
+        final String basicAuth = "Basic " + Base64.encodeToString(("dangelo" + ":" +
+                "echelon").getBytes(), Base64.NO_WRAP);
+        HelperContactSync hc = new HelperContactSync(getApplicationContext(), basicAuth, sp);
+        hc.contactSync("http://smartguardportal.azurewebsites.net/api/MobileContact?user=dangelo");
 
         final Handler handler = new Handler(){
 
@@ -82,12 +91,14 @@ public class SmartGuardService extends Service implements SensorEventListener{
             public void handleMessage(Message msg) {
                 // TODO Auto-generated method stub
                 super.handleMessage(msg);
-                Toast.makeText(getApplicationContext(), "audio:" + sm.getAmplitude() + " battery:" + isCharging
-                        , Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "audio:" + sm.getAmplitude() + " battery:" + isCharging
+                //        , Toast.LENGTH_SHORT).show();
 
                 //Toast.makeText(getApplicationContext(), "x:" + x + "y:" + y + "z:" + z, Toast.LENGTH_SHORT).show();
                 status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
                 boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING;
+                fl.resetDetector();
+                /*
                 if(sm.getAmplitude() > 4000 && isCharging)
                 {
 
@@ -122,7 +133,7 @@ public class SmartGuardService extends Service implements SensorEventListener{
                 if(count == 3)
                 {
 
-                }
+                }*/
 
             }
 
@@ -138,7 +149,7 @@ public class SmartGuardService extends Service implements SensorEventListener{
 
                     //Toast.makeText(getApplicationContext(), "Audio:" + sm.getAmplitude(), Toast.LENGTH_LONG).show();
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                         handler.sendEmptyMessage(0);
 
                     } catch (InterruptedException e) {
@@ -179,32 +190,10 @@ public class SmartGuardService extends Service implements SensorEventListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        x = event.values[0];
-        y = event.values[1];
-        z = event.values[2];
-        if((Math.abs(x) + Math.abs(y) + Math.abs(z)) > 40)
-        {
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "bbbb");
-            wl.acquire();
 
 
-
-
-            Intent dialogIntent = new Intent(getApplicationContext(), MenuActivity.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(dialogIntent);
-
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }
