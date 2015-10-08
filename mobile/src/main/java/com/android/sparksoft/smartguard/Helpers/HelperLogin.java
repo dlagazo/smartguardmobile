@@ -13,6 +13,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -37,6 +38,8 @@ public class HelperLogin {
         context = _context;
         sp = _sp;
     }
+
+
 
     public void loginHelper(final String url)
     {
@@ -227,5 +230,72 @@ public class HelperLogin {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(jsonObjReq);
+    }
+
+    public void SyncHelperJSONObject(String url)
+    {
+        Toast.makeText(context, "Sending JSON request.", Toast.LENGTH_LONG).show();
+        RequestQueue queue = Volley.newRequestQueue(context);
+        JSONObject params = new JSONObject();
+        //params.put("token", "AbCdEfGh123456");
+        JsonObjectRequest req = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray contacts = null, memories = null, places = null;
+                        try {
+                            contacts = response.getJSONArray("contacts");
+                            for(int i=0; i < contacts.length(); i++)
+                            {
+                                Toast.makeText(context, contacts.getJSONObject(i).get("Mobile").toString(), Toast.LENGTH_LONG).show();
+                            }
+                            memories = response.getJSONArray("memories");
+                            for(int i=0; i < memories.length(); i++)
+                            {
+                                Toast.makeText(context, memories.getJSONObject(i).get("MemoryName").toString(), Toast.LENGTH_LONG).show();
+                            }
+                            places = response.getJSONArray("places");
+                            for(int i=0; i< places.length(); i++)
+                            {
+                                Toast.makeText(context, places.getJSONObject(i).get("PlaceName").toString(), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+
+                    }
+                })
+                {
+
+                /**
+                 * Passing some request headers
+                 * */
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError
+                    {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Authorization", basicAuth);
+                        headers.put("Content-Type", "application/json; charset=utf-8");
+                        return headers;
+                    }
+
+                };
+
+                req.setRetryPolicy(new DefaultRetryPolicy(60000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(req);
     }
 }
