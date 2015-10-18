@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.sparksoft.smartguard.Features.VoiceRecognition;
+
 import java.util.ArrayList;
 import java.util.Locale;
 

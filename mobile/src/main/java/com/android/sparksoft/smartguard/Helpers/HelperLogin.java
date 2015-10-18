@@ -2,11 +2,14 @@ package com.android.sparksoft.smartguard.Helpers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.widget.Toast;
 
+import com.android.sparksoft.smartguard.Database.DataSourceContacts;
+import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.sparksoft.smartguard.MenuActivity;
-import com.android.sparksoft.smartguard.SmartGuardService;
-import com.android.sparksoft.smartguard.SpeechBot;
+import com.android.sparksoft.smartguard.Models.Contact;
+import com.android.sparksoft.smartguard.Services.SmartGuardService;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
@@ -20,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,15 +35,30 @@ public class HelperLogin {
     private String basicAuth;
     private SpeechBot sp;
     private Context context;
+    private boolean result;
+    private ArrayList<Contact> contactsArray;
+    private DataSourceContacts dsContacts;
 
     public HelperLogin(Context _context, String _basicAuth, SpeechBot _sp)
     {
         basicAuth = _basicAuth;
         context = _context;
         sp = _sp;
+        result = false;
+        //contactsArray = new ArrayList<Contact>();
+        dsContacts = new DataSourceContacts(context);
+        dsContacts.open();
     }
 
+    public boolean getResult()
+    {
+        return result;
+    }
 
+    public ArrayList<Contact> getContactsList()
+    {
+        return contactsArray;
+    }
 
     public void loginHelper(final String url)
     {
@@ -63,11 +82,6 @@ public class HelperLogin {
                                 {
                                     Toast.makeText(context, "Login successful", Toast.LENGTH_LONG).show();
                                     sp.talk("Login successful");
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
                                     //sp.destroy();
                                     sp.talk("Getting my contact's information");
                                     try {
@@ -234,7 +248,7 @@ public class HelperLogin {
 
     public void SyncHelperJSONObject(String url)
     {
-        Toast.makeText(context, "Sending JSON request.", Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, "Sending JSON request.", Toast.LENGTH_LONG).show();
         RequestQueue queue = Volley.newRequestQueue(context);
         JSONObject params = new JSONObject();
         //params.put("token", "AbCdEfGh123456");
@@ -242,23 +256,56 @@ public class HelperLogin {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        JSONArray contacts = null, memories = null, places = null;
+                        JSONArray contacts = null, memories = null, places = null, responses = null;
+                        String fullname = " ";
                         try {
+                            responses = response.getJSONArray("responses");
+                            for(int i= 0; i < responses.length(); i++)
+                            {
+                                if (responses.getJSONObject(i).getString("response").equals("Name"))
+                                    fullname = responses.getJSONObject(i).getString("value");
+                                else if(responses.getJSONObject(i).getString("response").equals("Result")) {
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    result = true;
+                                }
+                            }
                             contacts = response.getJSONArray("contacts");
                             for(int i=0; i < contacts.length(); i++)
                             {
-                                Toast.makeText(context, contacts.getJSONObject(i).get("Mobile").toString(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(context, contacts.getJSONObject(i).get("Mobile").toString(), Toast.LENGTH_LONG).show();
+                                Contact tempContact = new Contact(contacts.getJSONObject(i).getInt("ContactId"),
+                                        contacts.getJSONObject(i).getString("FirstName"),
+                                            contacts.getJSONObject(i).getString("LastName"),
+                                                contacts.getJSONObject(i).getString("Email"),
+                                                        contacts.getJSONObject(i).getString("Mobile"),
+                                                                contacts.getJSONObject(i).getString("Relationship"),
+                                                                        contacts.getJSONObject(i).getInt("Rank"));
+                                //contactsArray.add(tempContact);
+                                dsContacts.createContact(tempContact);
+
                             }
                             memories = response.getJSONArray("memories");
                             for(int i=0; i < memories.length(); i++)
                             {
-                                Toast.makeText(context, memories.getJSONObject(i).get("MemoryName").toString(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(context, memories.getJSONObject(i).get("MemoryName").toString(), Toast.LENGTH_LONG).show();
                             }
                             places = response.getJSONArray("places");
                             for(int i=0; i< places.length(); i++)
                             {
-                                Toast.makeText(context, places.getJSONObject(i).get("PlaceName").toString(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(context, places.getJSONObject(i).get("PlaceName").toString(), Toast.LENGTH_LONG).show();
                             }
+                            Vibrator v = (Vibrator) context.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                            v.vibrate(500);
+
+                            sp.talk("Hello " + fullname + ". You have " + contacts.length() + " contacts, " +
+                                    memories.length() + " memories, " +
+                                    places.length() + " places.");
+                            Toast.makeText(context, "Hello " + fullname + ". You have " + contacts.length() + " contacts, " +
+                                    memories.length() + " memories, " +  places.length() + " places.", Toast.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

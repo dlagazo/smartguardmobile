@@ -32,14 +32,13 @@ public class PhoneStateReceiver extends BroadcastReceiver {
 
             }
             else if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-                // Incoming call
-                String incomingNumber =
-                        intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+
+                //String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
                 //Log.d(TAG,"PhoneStateReceiver**Incoming call " + incomingNumber);
 
-                if (!killCall(context)) { // Using the method defined earlier
+                //if (!killCall(context)) { // Using the method defined earlier
                     //Log.d(TAG,"PhoneStateReceiver **Unable to kill incoming call");
-                }
+                //}
 
             } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
                 //Log.d(TAG,"PhoneStateReceiver **Offhook");

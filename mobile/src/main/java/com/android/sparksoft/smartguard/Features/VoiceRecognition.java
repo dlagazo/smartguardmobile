@@ -1,4 +1,4 @@
-package com.android.sparksoft.smartguard;
+package com.android.sparksoft.smartguard.Features;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +20,7 @@ public class VoiceRecognition implements RecognitionListener
     private Intent recognizerIntent;
     private Context _context;
     SpeechBot sp;
-    VoiceRecognition(Context context, String[] keywords)
+    public VoiceRecognition(Context context, String[] keywords)
     {
 
         _context = context;

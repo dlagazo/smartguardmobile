@@ -1,35 +1,20 @@
-package com.android.sparksoft.smartguard;
+package com.android.sparksoft.smartguard.Services;
 
-import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.media.AudioFormat;
-import android.media.AudioManager;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
-import android.os.Vibrator;
-import android.provider.MediaStore;
-import android.speech.tts.TextToSpeech;
-import android.util.Base64;
-import android.view.Menu;
 import android.widget.Toast;
 
-import com.android.sparksoft.smartguard.Helpers.HelperContactSync;
-
-import java.util.List;
-import java.util.Locale;
+import com.android.sparksoft.smartguard.Features.FallDetector;
+import com.android.sparksoft.smartguard.Features.SoundMeter;
+import com.android.sparksoft.smartguard.Features.SpeechBot;
 
 public class SmartGuardService extends Service{
     int count = 0;
@@ -80,10 +65,7 @@ public class SmartGuardService extends Service{
         // Let it continue running until it is stopped.
 
         Toast.makeText(this, "Syncing contacts", Toast.LENGTH_LONG).show();
-        final String basicAuth = "Basic " + Base64.encodeToString(("dangelo" + ":" +
-                "echelon").getBytes(), Base64.NO_WRAP);
-        HelperContactSync hc = new HelperContactSync(getApplicationContext(), basicAuth, sp);
-        hc.contactSync("http://smartguardportal.azurewebsites.net/api/MobileContact?user=dangelo");
+
 
         final Handler handler = new Handler(){
 

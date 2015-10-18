@@ -1,4 +1,4 @@
-package com.android.sparksoft.smartguard;
+package com.android.sparksoft.smartguard.Features;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,10 +6,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
 import android.os.PowerManager;
 import android.os.Vibrator;
-import android.speech.tts.TextToSpeech;
+
+import com.android.sparksoft.smartguard.MainActivity;
 
 /**
  * Created by Daniel on 9/26/2015.

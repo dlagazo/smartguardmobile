@@ -1,4 +1,4 @@
-package com.android.sparksoft.smartguard;
+package com.android.sparksoft.smartguard.Features;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;

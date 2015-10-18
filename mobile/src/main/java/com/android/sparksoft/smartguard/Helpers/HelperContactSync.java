@@ -1,12 +1,9 @@
 package com.android.sparksoft.smartguard.Helpers;
 
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
-import com.android.sparksoft.smartguard.MenuActivity;
-import com.android.sparksoft.smartguard.SmartGuardService;
-import com.android.sparksoft.smartguard.SpeechBot;
+import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;

@@ -1,5 +1,8 @@
 package com.android.sparksoft.smartguard;
 
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -11,16 +14,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.sparksoft.smartguard.Database.DataSourceSettings;
 import com.android.sparksoft.smartguard.Helpers.HelperLogin;
+import com.android.sparksoft.smartguard.Features.SpeechBot;
+import com.android.sparksoft.smartguard.Models.Settings;
 
 public class LoginActivity extends AppCompatActivity {
     private SpeechBot sp;
+    private HelperLogin hr;
+    private DataSourceSettings dsSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sp = new SpeechBot(this);
+
+        dsSettings = new DataSourceSettings(getApplicationContext());
+        if(dsSettings.getAllSettings()!= null) {
+            for (Settings set : dsSettings.getAllSettings()) {
+                if (set.getKey().equals("isValid")) {
+                    if (set.getValue().equals("true")) {
+                        Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
+                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(myIntent);
+                        finish();
+                    }
+                }
+            }
+        }
 
         Button btnLogin = (Button)findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -44,9 +66,57 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                HelperLogin hr = new HelperLogin(getApplicationContext(), basicAuth, sp);
-                //hr.loginHelper(url);
+                hr = new HelperLogin(getApplicationContext(), basicAuth, sp);
                 hr.SyncHelperJSONObject(url);
+                //hr.loginHelper(url);
+                final Handler loginHandler = new Handler(){
+
+                    @Override
+                    public void handleMessage(Message msg) {
+                        // TODO Auto-generated method stub
+                        super.handleMessage(msg);
+                            if(hr.getResult())
+                            {
+                                //setContentView(R.layout.activity_menu);
+                                Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
+                                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(myIntent);
+                                finish();
+
+
+                                //startService(new Intent(getApplicationContext(), SmartGuardService.class));
+
+
+                            }
+
+                    }
+
+                };
+
+
+
+                new Thread(new Runnable(){
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        while(true)
+                        {
+
+                            //Toast.makeText(getApplicationContext(), "Audio:" + sm.getAmplitude(), Toast.LENGTH_LONG).show();
+                            try {
+                                Thread.sleep(10000);
+                                loginHandler.sendEmptyMessage(0);
+
+                            } catch (InterruptedException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    }
+                }).start();
+
+
                 //hr.contactsHelper(url);
 
             }

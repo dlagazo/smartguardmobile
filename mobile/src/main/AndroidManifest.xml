@@ -6,9 +6,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -28,7 +29,7 @@
         </activity>
 
         <service
-            android:name=".SmartGuardService"
+            android:name=".Services.SmartGuardService"
             android:enabled="true"
             android:exported="true" >
         </service>
@@ -42,13 +43,21 @@
             android:label="MainActivity" >
         </activity>
 
-        <receiver android:name=".PhoneStateReceiver">
-            <intent-filter android:priority="0">
+        <!--
+        <receiver android:name=".PhoneStateReceiver" >
+            <intent-filter android:priority="0" >
                 <action android:name="android.intent.action.PHONE_STATE" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
 
+
+        <service
+            android:name=".Services.EmergencyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        -->
     </application>
 
 </manifest>
