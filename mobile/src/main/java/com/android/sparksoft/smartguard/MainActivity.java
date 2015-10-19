@@ -7,6 +7,8 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +16,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.sparksoft.smartguard.Database.DataSourceContacts;
+import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.sparksoft.smartguard.Features.VoiceRecognition;
+import com.android.sparksoft.smartguard.Listeners.CallListener;
+import com.android.sparksoft.smartguard.Services.FallService;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private TextToSpeech tts;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private VoiceRecognition vr;
+    private DataSourceContacts dsContacts;
+    private SpeechBot sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,59 +41,35 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-        tts = new TextToSpeech(this, this);
+
+        dsContacts = new DataSourceContacts(this);
+        dsContacts.open();
+        sp = new SpeechBot(this);
 
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.layout_sos);
 
         //promptSpeechInput();
 
-        Button btnYes = (Button) findViewById(R.id.btnYes);
-        btnYes.setOnClickListener(new View.OnClickListener() {
+        Button btnSOSCall = (Button)findViewById(R.id.btnSosCall);
+        btnSOSCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (!tts.isSpeaking()) {
-                    tts.speak("Yes I am ok", TextToSpeech.QUEUE_FLUSH, null);
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                finish();
-            }
-        });
-        Button btnNo = (Button) findViewById(R.id.btnNo);
-        btnNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!tts.isSpeaking()) {
-                    tts.speak("Calling Anna Mueller", TextToSpeech.QUEUE_FLUSH, null);
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "123456"));
-                startActivity(intent);
-                finish();
+                CallListener pscl = new CallListener(getApplicationContext(), sp, dsContacts.getAllContacts());
+                TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                tm.listen(pscl, PhoneStateListener.LISTEN_CALL_STATE);
+                //startService(new Intent(getApplicationContext(), FallService.class));
             }
         });
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(vr!= null) {
-            vr.stop();
-        }
-        else
-        {
-
-        }
+        Button btnSOSOk = (Button)findViewById(R.id.btnSosOk);
+        btnSOSOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //startService(new Intent(getApplicationContext(), FallService.class));
+                finish();
+            }
+        });
 
     }
 

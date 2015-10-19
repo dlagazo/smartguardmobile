@@ -23,6 +23,8 @@ import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.sparksoft.smartguard.Features.VoiceRecognition;
 import com.android.sparksoft.smartguard.Listeners.CallListener;
 import com.android.sparksoft.smartguard.Models.Contact;
+import com.android.sparksoft.smartguard.Services.FallService;
+import com.android.sparksoft.smartguard.Services.SmartGuardService;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -41,6 +43,12 @@ public class MenuActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+
+
+        startService(new Intent(getApplicationContext(), FallService.class));
+
+
         setButtons();
         dsContacts = new DataSourceContacts(this);
         dsContacts.open();
