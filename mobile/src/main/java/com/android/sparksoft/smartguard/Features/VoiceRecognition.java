@@ -1,12 +1,16 @@
 package com.android.sparksoft.smartguard.Features;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.android.sparksoft.smartguard.R;
 
 import java.util.ArrayList;
 
@@ -18,13 +22,18 @@ public class VoiceRecognition implements RecognitionListener
     private String speechText;
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
-    private Context _context;
+    private Context context;
     SpeechBot sp;
-    public VoiceRecognition(Context context, String[] keywords)
+    ArrayList<String> matches;
+    int id;
+    Button[] btn;
+
+    public VoiceRecognition(Context _context, Button[] _btn, String[] keywords)
     {
 
-        _context = context;
-        sp = new SpeechBot(_context);
+        context = _context;
+        btn = _btn;
+        //sp = new SpeechBot(_context);
         speech = SpeechRecognizer.createSpeechRecognizer(context);
         speech.setRecognitionListener(this);
 
@@ -38,9 +47,15 @@ public class VoiceRecognition implements RecognitionListener
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
     }
 
+    public void setCommand(int _id)
+    {
+        //0-emergency call
+        id = _id;
+    }
+
     public void start()
     {
-        Toast.makeText(_context, "Say something", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Please speak now", Toast.LENGTH_LONG).show();
         speech.startListening(recognizerIntent);
         try {
             Thread.sleep(2000);
@@ -91,26 +106,48 @@ public class VoiceRecognition implements RecognitionListener
         String errorMessage = getErrorText(error);
     }
 
+    public boolean findMatch(String text)
+    {
+        for (String str:matches)
+        {
+            if(str.toLowerCase().equals(text.toLowerCase()))
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+        return false;
+    }
+
     @Override
     public void onResults(Bundle results) {
         //Toast.makeText(_context, "Results detected", Toast.LENGTH_LONG).show();
-        ArrayList<String> matches = results
+        matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         String text = "";
         for (String result : matches)
             text += result + " ";
         speechText = text;
-        Toast.makeText(_context, text, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 
-        if(text.toLowerCase().contains("yes"))
+        if(id == 0)
         {
-            sp.talk("yes");
-            Toast.makeText(_context, "Yes detected in speech", Toast.LENGTH_SHORT).show();
+            if(text.toLowerCase().contains("ok"))
+            {
+                btn[0].performClick();
+
+            }
+            else if(text.toLowerCase().contains("yes"))
+            {
+                btn[1].performClick();
+            }
+
+
         }
 
-        else if(text.toLowerCase().contains("no"))
-            sp.talk("no");
-        stop();
+
+        //stop();
 
 
     }

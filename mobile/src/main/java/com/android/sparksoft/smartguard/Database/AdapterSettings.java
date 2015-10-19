@@ -17,7 +17,7 @@ public class AdapterSettings extends SQLiteOpenHelper {
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table "
-            + TABLE_SETTINGS + "(" + SETTINGS_KEY + " primary key, " +
+            + TABLE_SETTINGS + "(" + SETTINGS_KEY + " text primary key, " +
             SETTINGS_VALUE + " text);";
 
     public AdapterSettings(Context context) {

@@ -14,7 +14,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:text="SOS"
-            android:id="@+id/btnCall"
+            android:id="@+id/btnSos"
             android:textSize="80px"
             android:background="#ff0000"
             android:textColor="#ffffff" />

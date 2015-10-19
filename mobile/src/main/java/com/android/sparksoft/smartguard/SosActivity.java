@@ -3,10 +3,10 @@ package com.android.sparksoft.smartguard;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +19,7 @@ import com.android.sparksoft.smartguard.Features.VoiceRecognition;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class SosActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     private TextToSpeech tts;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private VoiceRecognition vr;
@@ -33,59 +33,14 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-        tts = new TextToSpeech(this, this);
 
 
-        setContentView(R.layout.activity_main);
+
+        setContentView(R.layout.layout_sos);
 
         //promptSpeechInput();
 
-        Button btnYes = (Button) findViewById(R.id.btnYes);
-        btnYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                if (!tts.isSpeaking()) {
-                    tts.speak("Yes I am ok", TextToSpeech.QUEUE_FLUSH, null);
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                finish();
-            }
-        });
-        Button btnNo = (Button) findViewById(R.id.btnNo);
-        btnNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!tts.isSpeaking()) {
-                    tts.speak("Calling Anna Mueller", TextToSpeech.QUEUE_FLUSH, null);
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "123456"));
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(vr!= null) {
-            vr.stop();
-        }
-        else
-        {
-
-        }
 
     }
 
@@ -93,12 +48,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     protected void onDestroy()
     {
         super.onDestroy();
-        if (tts != null) {
-            tts.stop();
 
-
-            tts.shutdown();
-        }
     }
 
     @Override

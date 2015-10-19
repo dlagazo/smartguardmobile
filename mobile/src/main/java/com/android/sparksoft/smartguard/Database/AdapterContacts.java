@@ -27,7 +27,7 @@ public class AdapterContacts extends SQLiteOpenHelper {
             CONTACT_EMAIL + " text," +
             CONTACT_MOBILE + " text not null," +
             CONTACT_RELATION + " text," +
-            CONTACT_RANK + " integer not null," +
+            CONTACT_RANK + " integer not null" +
             ");";
 
     public AdapterContacts(Context context) {

@@ -1,5 +1,7 @@
 package com.android.sparksoft.smartguard.Helpers;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Vibrator;
@@ -9,6 +11,7 @@ import com.android.sparksoft.smartguard.Database.DataSourceContacts;
 import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.sparksoft.smartguard.MenuActivity;
 import com.android.sparksoft.smartguard.Models.Contact;
+import com.android.sparksoft.smartguard.R;
 import com.android.sparksoft.smartguard.Services.SmartGuardService;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -265,15 +268,16 @@ public class HelperLogin {
                                 if (responses.getJSONObject(i).getString("response").equals("Name"))
                                     fullname = responses.getJSONObject(i).getString("value");
                                 else if(responses.getJSONObject(i).getString("response").equals("Result")) {
-                                    try {
-                                        Thread.sleep(5000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    result = true;
+                                    Intent myIntent = new Intent(context, MenuActivity.class);
+                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(myIntent);
+
+                                    //result = true;
+
                                 }
                             }
                             contacts = response.getJSONArray("contacts");
+
                             for(int i=0; i < contacts.length(); i++)
                             {
                                 //Toast.makeText(context, contacts.getJSONObject(i).get("Mobile").toString(), Toast.LENGTH_LONG).show();
@@ -285,6 +289,14 @@ public class HelperLogin {
                                                                 contacts.getJSONObject(i).getString("Relationship"),
                                                                         contacts.getJSONObject(i).getInt("Rank"));
                                 //contactsArray.add(tempContact);
+                                try
+                                {
+                                    dsContacts.deleteContact(contacts.getJSONObject(i).getInt("ContactId"));
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
                                 dsContacts.createContact(tempContact);
 
                             }

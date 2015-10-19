@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sp = new SpeechBot(this);
-
+        /*
         dsSettings = new DataSourceSettings(getApplicationContext());
         if(dsSettings.getAllSettings()!= null) {
             for (Settings set : dsSettings.getAllSettings()) {
@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         }
-
+        */
         Button btnLogin = (Button)findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +68,34 @@ public class LoginActivity extends AppCompatActivity {
 
                 hr = new HelperLogin(getApplicationContext(), basicAuth, sp);
                 hr.SyncHelperJSONObject(url);
-                //hr.loginHelper(url);
-                final Handler loginHandler = new Handler(){
 
+
+
+                /*
+                try {
+                    Thread.sleep(5000);
+                    if(hr.getResult())
+                    {
+                        Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
+                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(myIntent);
+                        finish();
+                    }
+                    else
+                    {
+                        //sp.talk("Login failed. Please try again.");
+                        //Toast.makeText(getApplicationContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                */
+                //hr.loginHelper(url);
+
+                /*
+                final Handler loginHandler = new Handler()
+                {
                     @Override
                     public void handleMessage(Message msg) {
                         // TODO Auto-generated method stub
@@ -116,8 +141,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }).start();
 
+                */
 
-                //hr.contactsHelper(url);
 
             }
 
