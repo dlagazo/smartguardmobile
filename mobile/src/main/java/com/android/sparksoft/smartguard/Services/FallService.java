@@ -42,9 +42,10 @@ public class FallService extends Service implements SensorEventListener {
     private int potentialFallCounter = 0;
     private boolean potentiallyFallen = false;
     private boolean actuallyFallen = false;
-    private double FALL_THRESHOLD = 18.0;
+    private double FALL_THRESHOLD = 30.0;
     private double MOVE_THRESHOLD = 0.9;
     private SpeechBot sp;
+
 
     public FallService() {
         super();
@@ -53,7 +54,7 @@ public class FallService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        sp = new SpeechBot(this);
+        sp = new SpeechBot(this, null);
         accelerometerData = new ArrayList<>();
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -159,7 +160,7 @@ public class FallService extends Service implements SensorEventListener {
                     //TODO: Prompt user if they are ok.
                     Log.d(DEBUG_TAG, "Actual Fall!");
                     Toast.makeText(this, "Fall detected", Toast.LENGTH_LONG).show();
-                    sp.talk("Are you OK?");
+                    sp.talk("Do you need an emergency call?");
                     Intent fallIntent = new Intent(getApplicationContext(), MainActivity.class);
                     fallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(fallIntent);

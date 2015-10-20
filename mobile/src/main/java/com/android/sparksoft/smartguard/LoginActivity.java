@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        sp = new SpeechBot(this);
+        sp = new SpeechBot(this, null);
         /*
         dsSettings = new DataSourceSettings(getApplicationContext());
         if(dsSettings.getAllSettings()!= null) {

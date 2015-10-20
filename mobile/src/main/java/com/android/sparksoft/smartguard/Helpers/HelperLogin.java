@@ -8,9 +8,11 @@ import android.os.Vibrator;
 import android.widget.Toast;
 
 import com.android.sparksoft.smartguard.Database.DataSourceContacts;
+import com.android.sparksoft.smartguard.Database.DataSourcePlaces;
 import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.sparksoft.smartguard.MenuActivity;
 import com.android.sparksoft.smartguard.Models.Contact;
+import com.android.sparksoft.smartguard.Models.Place;
 import com.android.sparksoft.smartguard.R;
 import com.android.sparksoft.smartguard.Services.SmartGuardService;
 import com.android.volley.AuthFailureError;
@@ -41,6 +43,7 @@ public class HelperLogin {
     private boolean result;
     private ArrayList<Contact> contactsArray;
     private DataSourceContacts dsContacts;
+    private DataSourcePlaces dsPlaces;
 
     public HelperLogin(Context _context, String _basicAuth, SpeechBot _sp)
     {
@@ -51,6 +54,10 @@ public class HelperLogin {
         //contactsArray = new ArrayList<Contact>();
         dsContacts = new DataSourceContacts(context);
         dsContacts.open();
+
+        dsPlaces = new DataSourcePlaces(context);
+        dsPlaces.open();
+
     }
 
     public boolean getResult()
@@ -306,18 +313,31 @@ public class HelperLogin {
                                 //Toast.makeText(context, memories.getJSONObject(i).get("MemoryName").toString(), Toast.LENGTH_LONG).show();
                             }
                             places = response.getJSONArray("places");
+                            //dsPlaces.deleteAllPlaces();
                             for(int i=0; i< places.length(); i++)
                             {
+                                Place tempPlace = new Place(places.getJSONObject(i).getInt("PlaceId"),
+                                        places.getJSONObject(i).getString("PlaceName"),
+                                        places.getJSONObject(i).getString("PlaceLat"),
+                                        places.getJSONObject(i).getString("PlaceLong"));
+                                //Toast.makeText(context, tempPlace.getId() + " " +
+                                //    tempPlace.getPlaceName(), Toast.LENGTH_SHORT).show();
+                                try
+                                {
+                                    dsPlaces.deletePlace(places.getJSONObject(i).getInt("PlaceId"));
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                                dsPlaces.createPlace(tempPlace);
                                 //Toast.makeText(context, places.getJSONObject(i).get("PlaceName").toString(), Toast.LENGTH_LONG).show();
                             }
                             Vibrator v = (Vibrator) context.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             v.vibrate(500);
 
-                            sp.talk("Hello " + fullname + ". You have " + contacts.length() + " contacts, " +
-                                    memories.length() + " memories, " +
-                                    places.length() + " places.");
-                            Toast.makeText(context, "Hello " + fullname + ". You have " + contacts.length() + " contacts, " +
-                                    memories.length() + " memories, " +  places.length() + " places.", Toast.LENGTH_LONG).show();
+                            sp.talk("Hello " + fullname);
+                            Toast.makeText(context, "Hello " + fullname, Toast.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

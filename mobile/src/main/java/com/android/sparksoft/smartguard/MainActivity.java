@@ -25,12 +25,13 @@ import com.android.sparksoft.smartguard.Services.FallService;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class MainActivity extends AppCompatActivity {
     private TextToSpeech tts;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private VoiceRecognition vr;
     private DataSourceContacts dsContacts;
     private SpeechBot sp;
+    private static final int VOICE_RECOGNITION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         dsContacts = new DataSourceContacts(this);
         dsContacts.open();
-        sp = new SpeechBot(this);
-
+        sp = new SpeechBot(this, null);
+        speak();
 
         setContentView(R.layout.layout_sos);
 
@@ -107,72 +108,43 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
-    public void onInit(int code) {
-        if (code == TextToSpeech.SUCCESS) {
-            tts.setLanguage(Locale.ENGLISH);
+    protected void onActivityResult(int requestCode,
+                                    int resultCode,
+                                    Intent data) {
+        if (requestCode == VOICE_RECOGNITION && resultCode == RESULT_OK) {
+            ArrayList<String> results;
+            results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            // TODO Do something with the recognized voice strings
 
-
-        } else {
-            tts = null;
-            Toast.makeText(this, "Failed to initialize TTS engine.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, results.get(0), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), results.get(0), Toast.LENGTH_LONG).show();
+            for(String str:results.get(0).split(" "))
+            {
+                if(str.toLowerCase().equals("yes"))
+                {
+                    Toast.makeText(getApplicationContext(),"Emergency call", Toast.LENGTH_SHORT).show();
+                }
+                else if(str.toLowerCase().equals("ok") || str.toLowerCase().equals("no"))
+                {
+                    finish();
+                }
+            }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void promptSpeechInput() {
+    public void speak(){
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        // Specify free form input
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                "Say something");
-
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry! Your device does not support speech to text.",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Receiving speech input
-     * */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
-                if (resultCode == RESULT_OK && null != data) {
-
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    Toast.makeText(getApplicationContext(), result.get(0), Toast.LENGTH_SHORT).show();
-                    //txtSpeechInput.setText(result.get(0));
-                    if(result.get(0).equals("yes"))
-                        finish();
-                    else if(result.get(0).toLowerCase().equals("no"))
-                    {
-                        if (!tts.isSpeaking()) {
-                            tts.speak("Calling Anna Mueller", TextToSpeech.QUEUE_FLUSH, null);
-                        }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "123456"));
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-                break;
-            }
-
-        }
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Please start speaking");
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
+        startActivityForResult(intent, VOICE_RECOGNITION);
     }
 
 }

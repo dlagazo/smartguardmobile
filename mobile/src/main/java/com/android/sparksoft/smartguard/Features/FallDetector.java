@@ -28,7 +28,7 @@ public class FallDetector implements SensorEventListener{
     {
         fallDetected = true;
         _context = context;
-        speechBot = new SpeechBot(context);
+        speechBot = new SpeechBot(context, null);
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {

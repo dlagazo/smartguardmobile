@@ -62,6 +62,10 @@ public class Contact {
 
     public String getFullName()
     {
+        if(firstName.toLowerCase().equals("null"))
+            firstName = "";
+        if(lastName.toLowerCase().equals("null"))
+            lastName = "";
         return firstName + " " + lastName;
     }
 }

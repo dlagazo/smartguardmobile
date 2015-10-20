@@ -52,7 +52,7 @@ public class SmartGuardService extends Service{
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString("fallStatus", "false");
         edit.commit();
-        sp = new SpeechBot(getApplicationContext());
+        sp = new SpeechBot(getApplicationContext(), null);
         //sm = new SoundMeter();
         //sm.start();
 

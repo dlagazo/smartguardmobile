@@ -13,11 +13,12 @@ import java.util.Locale;
 public class SpeechBot implements TextToSpeech.OnInitListener {
     private TextToSpeech tts;
     private Context _context;
+    private String speech;
 
-    public SpeechBot(Context context)
+    public SpeechBot(Context context, String _speech)
     {
         _context = context;
-
+        speech = _speech;
         tts = new TextToSpeech(context, this);
         AudioManager audioManager = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setSpeakerphoneOn(true);
@@ -45,7 +46,10 @@ public class SpeechBot implements TextToSpeech.OnInitListener {
                     }
                 }
             });
-
+            if(speech != null)
+            {
+                talk(speech);
+            }
 
         } else {
             tts = null;

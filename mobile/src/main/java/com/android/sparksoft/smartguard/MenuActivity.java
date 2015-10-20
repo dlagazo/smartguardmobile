@@ -55,7 +55,7 @@ public class MenuActivity extends AppCompatActivity {
 
         sharedPrefs = getSharedPreferences("prefs", Context.MODE_WORLD_WRITEABLE);
 
-        sp = new SpeechBot(this);
+        sp = new SpeechBot(this, null);
         arrayContacts = dsContacts.getAllContacts();
 
 
@@ -125,16 +125,22 @@ public class MenuActivity extends AppCompatActivity {
         btnContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setContentView(R.layout.layout_contacts);
-                LinearLayout layoutContacts = (LinearLayout) findViewById(R.id.linearlayoutContacts);
+                Intent commIntent = new Intent(getApplicationContext(), CommunicateActivity.class);
+                commIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(commIntent);
 
-                for (Contact contact : dsContacts.getAllContacts()) {
-                    Button btnNewContact = new Button(getApplicationContext());
-                    btnNewContact.setWidth(layoutContacts.getWidth());
-                    btnNewContact.setHeight(layoutContacts.getHeight() / 5);
-                    btnNewContact.setText(contact.getFullName());
-                    layoutContacts.addView(btnNewContact);
-                }
+
+            }
+        });
+
+        Button btnNav = (Button) findViewById(R.id.btnNav);
+        btnNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent navIntent = new Intent(getApplicationContext(), NavigateActivity.class);
+                navIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(navIntent);
+
 
             }
         });
@@ -176,6 +182,10 @@ public class MenuActivity extends AppCompatActivity {
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
         startActivityForResult(intent, VOICE_RECOGNITION);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
 
