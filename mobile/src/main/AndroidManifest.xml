@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
     <application
         android:allowBackup="true"
@@ -33,6 +35,9 @@
             android:name=".Services.SmartGuardService"
             android:enabled="true"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.sparksoft.smartguard.Services.SmartGuardService"/>
+            </intent-filter>
         </service>
 
         <activity
@@ -53,7 +58,7 @@
             android:label="NavigateActivity" >
         </activity>
 
-        <!--
+
         <receiver android:name=".PhoneStateReceiver" >
             <intent-filter android:priority="0" >
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -67,7 +72,7 @@
             android:enabled="true"
             android:exported="true" >
         </service>
-        -->
+
         <service
             android:name=".Services.FallService"
             android:enabled="true"

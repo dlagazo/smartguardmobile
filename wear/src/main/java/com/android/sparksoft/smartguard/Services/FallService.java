@@ -2,11 +2,6 @@ package com.android.sparksoft.smartguard.Services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.IBinder;
-
-
-import android.app.Service;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -42,7 +37,7 @@ public class FallService extends Service implements SensorEventListener {
     private int potentialFallCounter = 0;
     private boolean potentiallyFallen = false;
     private boolean actuallyFallen = false;
-    private double FALL_THRESHOLD = 30.0;
+    private double FALL_THRESHOLD = 25.0;
     private double MOVE_THRESHOLD = 0.9;
     private SpeechBot sp;
 
@@ -55,7 +50,7 @@ public class FallService extends Service implements SensorEventListener {
     public void onCreate() {
         super.onCreate();
         sp = new SpeechBot(this, null);
-        accelerometerData = new ArrayList<>();
+        accelerometerData = new ArrayList<AccelerometerData>();
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {

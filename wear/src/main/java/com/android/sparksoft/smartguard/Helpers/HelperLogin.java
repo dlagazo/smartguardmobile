@@ -1,7 +1,5 @@
 package com.android.sparksoft.smartguard.Helpers;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Vibrator;
@@ -13,7 +11,6 @@ import com.android.sparksoft.smartguard.Features.SpeechBot;
 import com.android.sparksoft.smartguard.MenuActivity;
 import com.android.sparksoft.smartguard.Models.Contact;
 import com.android.sparksoft.smartguard.Models.Place;
-import com.android.sparksoft.smartguard.R;
 import com.android.sparksoft.smartguard.Services.SmartGuardService;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;

@@ -48,13 +48,13 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sp.talk("Logging in. Please wait.");
+                sp.talk("Logging in. Please wait.", false);
                 Toast.makeText(getApplicationContext(), "Logging in. Please wait.", Toast.LENGTH_LONG).show();
 
                 TextView username = (TextView)findViewById(R.id.etUsername);
                 TextView password = (TextView)findViewById(R.id.etPassword);
 
-                String url = "http://smartguardportal.azurewebsites.net/api/MobileContact";
+                String url = "http://smartguardwatch.azurewebsites.net/api/MobileContact";
 
 
 

@@ -3,6 +3,9 @@ package com.android.sparksoft.smartguard;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +29,7 @@ import com.android.sparksoft.smartguard.Models.Contact;
 import com.android.sparksoft.smartguard.Services.FallService;
 import com.android.sparksoft.smartguard.Services.SmartGuardService;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -97,7 +101,7 @@ public class MenuActivity extends AppCompatActivity {
                     }
                 });
                 //Button[] btns = {btnSosOk, btnSosCall};
-                sp.talk("Do you need an emergency call?");
+                sp.talk("Do you need an emergency call?", false);
                 Toast.makeText(getApplicationContext(),"Do you need an emergency call?", Toast.LENGTH_LONG).show();
                 //vr = new VoiceRecognition(getApplicationContext(), btns, null);
                 //vr.setCommand(0);
@@ -142,6 +146,18 @@ public class MenuActivity extends AppCompatActivity {
                 startActivity(navIntent);
 
 
+            }
+        });
+
+        Button btnMemo = (Button) findViewById(R.id.btnMemorize);
+        btnMemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                File file = new File("/storage/emulated/0/Samsung/Music/Over the Horizon.mp3");
+                intent.setDataAndType(Uri.fromFile(file), "audio/*");
+                startActivity(intent);
             }
         });
 

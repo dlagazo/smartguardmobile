@@ -4,8 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
+
+import com.android.sparksoft.smartguard.Features.SpeechBot;
+import com.android.sparksoft.smartguard.Services.FallService;
+import com.android.sparksoft.smartguard.Services.SmartGuardService;
 
 import java.lang.reflect.Method;
 
@@ -19,16 +24,21 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.PHONE_STATE")) {
             String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
             //Log.d(TAG, "PhoneStateReceiver**Call State=" + state);
-            Toast.makeText(context, "Phone state: " + state, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Phone state: " + state, Toast.LENGTH_SHORT).show();
+
 
             SharedPreferences prefs = context.getSharedPreferences("com.android.sparksoft", Context.MODE_WORLD_READABLE);
             Toast.makeText(context, "Fall state: " + prefs.getString("fallState","default"), Toast.LENGTH_LONG).show();
             if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
-                //Log.d(TAG,"PhoneStateReceiver**Idle");
+
             }
             else if(state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))
             {
 
+                Intent navIntent = new Intent(context, NavigateActivity.class);
+                navIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(navIntent);
+                context.startService(new Intent(context, SmartGuardService.class));
 
             }
             else if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {

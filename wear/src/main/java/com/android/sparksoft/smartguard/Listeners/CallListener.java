@@ -3,21 +3,13 @@ package com.android.sparksoft.smartguard.Listeners;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.media.ToneGenerator;
 import android.net.Uri;
-import android.provider.Telephony;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
-import com.android.sparksoft.smartguard.Models.Contact;
 import com.android.sparksoft.smartguard.Features.SpeechBot;
-import com.android.sparksoft.smartguard.R;
-import com.android.sparksoft.smartguard.Services.SmartGuardService;
+import com.android.sparksoft.smartguard.Models.Contact;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,10 +29,8 @@ public class CallListener extends PhoneStateListener {
 
     public CallListener(Context _context, SpeechBot _sp, ArrayList<Contact> _contacts)
     {
-
         callCount = 0;
         context = _context;
-        context.startService(new Intent(context, SmartGuardService.class));
         sp = new SpeechBot(context, null);
         didHook = false;
         didRing = false;
@@ -61,15 +51,13 @@ public class CallListener extends PhoneStateListener {
 
             editor.putString("callState", "ringing");
             didRing = true;
-            sp.talk("The phone is ringing", true);
         }
         if(TelephonyManager.CALL_STATE_OFFHOOK == state) {
             //wait for phone to go offhook (probably set a boolean flag) so you know your app initiated the call.
             Toast.makeText(context, "Call state is offhook.", Toast.LENGTH_LONG).show();
-
             editor.putString("callState", "offhook");
             didHook = true;
-            sp.talk("Phone is off-hook", true);
+            //sp.talk("Phone is off-hook", true);
 
         }
         if(TelephonyManager.CALL_STATE_IDLE == state) {
@@ -86,7 +74,7 @@ public class CallListener extends PhoneStateListener {
                     context.startActivity(intent);
 
                     Intent voiceintent = new Intent();
-                    voiceintent.setAction(android.content.Intent.ACTION_VIEW);
+                    voiceintent.setAction(Intent.ACTION_VIEW);
                     voiceintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     File file = new File("/storage/emulated/0/Samsung/Music/Over the Horizon.mp3");
                     voiceintent.setDataAndType(Uri.fromFile(file), "audio/*");
